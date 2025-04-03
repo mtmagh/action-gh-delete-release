@@ -4,7 +4,7 @@ inputs:
   token:  # id of input
     description: 'GitHub token'
     required: true
-    default: ${{ github.token }}
+    # default: ${{ github.token }}
   tag:
     description: 'Release tag'
     required: true
@@ -13,13 +13,13 @@ runs:
   steps:
     - name: Delete release if it exists
       run: |
-        RELEASE_ID=$(gh release view $INPUT_TAG --json id -q .id || echo "")
+        RELEASE_ID=$(gh release view ${INPUT_TAG} --json id -q .id || echo "")
         if [ -n "$RELEASE_ID" ]; then
           gh release delete latest-workflow-run --yes
-          gh api --method DELETE repos/${{ github.repository }}/git/refs/tags/$INPUT_TAG || echo "Tag not found"
+          gh api --method DELETE repos/${{ github.repository }}/git/refs/tags/${INPUT_TAG} || echo "Tag not found"
         else
           echo "No existing release found"
         fi
       shell: bash
       env:
-        GH_TOKEN: $INPUT_TOKEN
+        GH_TOKEN: ${INPUT_TOKEN}
