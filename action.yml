@@ -4,7 +4,7 @@ inputs:
   token:  # id of input
     description: 'GitHub token'
     required: true
-    # default: ${{ github.token }}
+    default: ${{ github.token }}
   tag:
     description: 'Release tag'
     required: true
