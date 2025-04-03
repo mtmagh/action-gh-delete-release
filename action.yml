@@ -1,4 +1,4 @@
-name: 'Hello World'
+ name: 'Hello World'
 description: 'Greet someone'
 inputs:
   who-to-greet:  # id of input
@@ -30,6 +30,6 @@ runs:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
 
     - name: Run goodbye.sh
-      run: goodbye.sh
+      run: echo "goodbye.sh"
       shell: bash
 
