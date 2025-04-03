@@ -20,5 +20,6 @@ runs:
         else
           echo "No existing release found"
         fi
+      shell: bash
       env:
         GH_TOKEN: $INPUT_TOKEN
