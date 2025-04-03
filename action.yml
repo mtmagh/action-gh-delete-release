@@ -1,35 +1,24 @@
 name: 'Hello World'
 description: 'Greet someone'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  token:  # id of input
+    description: 'GitHub token'
     required: true
-    default: 'World'
-outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-number }}
+    default: ${{ github.token }}
+  tag:
+    description: 'Release tag'
+    required: true
 runs:
   using: "composite"
   steps:
-    - name: Set Greeting
-      run: echo "Hello $INPUT_WHO_TO_GREET."
-      shell: bash
+    - name: Delete release if it exists
+      run: |
+        RELEASE_ID=$(gh release view $INPUT_TAG --json id -q .id || echo "")
+        if [ -n "$RELEASE_ID" ]; then
+          gh release delete latest-workflow-run --yes
+          gh api --method DELETE repos/${{ github.repository }}/git/refs/tags/$INPUT_TAG || echo "Tag not found"
+        else
+          echo "No existing release found"
+        fi
       env:
-        INPUT_WHO_TO_GREET: ${{ inputs.who-to-greet }}
-
-    - name: Random Number Generator
-      id: random-number-generator
-      run: echo "random-number=$(echo $RANDOM)" >> $GITHUB_OUTPUT
-      shell: bash
-
-    - name: Set GitHub Path
-      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
-      shell: bash
-      env:
-        GITHUB_ACTION_PATH: ${{ github.action_path }}
-
-    - name: Run goodbye.sh
-      run: echo "goodbye.sh"
-      shell: bash
-
+        GH_TOKEN: $INPUT_TOKEN
